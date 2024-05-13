@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <p>
+        Your current cash is : {{username}}
+    </p>
+    <h3>Add Cash</h3>
+    <form action="/addcash" method="post">
+        <div class="mb-3">
+            <input autocomplete="off" autofocus="" class="form-control mx-auto w-auto" name="addcash" placeholder="Cash To Be Added" type="number" >
+        </div>
+        <button class="btn btn-primary" type="submit" >Add Cash</button>
+    </form>
+
+{% endblock %}

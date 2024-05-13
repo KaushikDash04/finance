@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Log In
+{% endblock %}
+
+{% block main %}
+    <table class="table tablestriped">
+        <thead>
+            <tr>
+                <th class="text-start">Trade Id</th>
+                <th class="text-start">Symbol</th>
+                <th class="text-start">Name</th>
+                <th class="text-end">Shares</th>
+                <th class="text-end">B/S</th>
+                <th class="text-end">Price</th>
+                <th class="text-end">Transacted</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Loop through the database entries to display them in this table -->
+            {% for trade in trades %}
+                <tr>
+                    <td class="text-start">{{ trade["TRANSACTION_ID"] }}</td>
+                    <td class="text-start">{{ trade["symbol"] }}</td>
+                    <td class="text-start">{{ trade["name"]}}</td>
+                    <td class="text-end">{{ trade["shares"]}}</td>
+                    <td class="text-end">{{ trade["type"]}}</td>
+                    <td class="text-end">{{ trade["price"] | usd}}</td>
+                    <td class="text-end">{{ trade["timestamp"] }}</td>
+                </tr>
+            {% endfor %}
+    </table>
+{% endblock %}
+
