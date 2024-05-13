@@ -8,6 +8,29 @@
     <p>
         A share of {{stock_quote.name}} ({{stock_quote.symbol}}) costs {{stock_quote.price | usd}}.
     </p>
-
+    <div class="tradingview-chart">
+        <div class="tradingview-widget-container">
+            <div id="tradingview_{{stock_quote.symbol}}"></div>
+        </div>
+        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+        <script type="text/javascript">
+            new TradingView.widget(
+            {
+                "width": 980,
+                "height": 610,
+                "symbol": "{{stock_quote.symbol}}",
+                "interval": "D",
+                "timezone": "Etc/UTC",
+                "theme": "light",
+                "style": "1",
+                "locale": "en",
+                "toolbar_bg": "#f1f3f6",
+                "enable_publishing": false,
+                "allow_symbol_change": true,
+                "container_id": "tradingview_{{stock_quote.symbol}}"
+            }
+            );
+        </script>
+    </div>
     
 {% endblock %}
