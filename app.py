@@ -139,8 +139,8 @@ def login():
 
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
-
-        print(f"User login: {rows[0]["username"]}")
+        user_login = rows[0]["username"]
+        print(f"User login: {user_login}")
         # Redirect user to home page
         return redirect("/")
 
