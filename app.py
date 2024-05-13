@@ -130,6 +130,7 @@ def login():
         rows = db.execute(
             "SELECT * FROM users WHERE username = ?", request.form.get("username")
         )
+        print(db.execute("SELECT * FROM users "))
         # Ensure username exists and password is correct
         if len(rows) != 1 or not check_password_hash(
             rows[0]["hash"], request.form.get("password")
@@ -139,6 +140,7 @@ def login():
         # Remember which user has logged in
         session["user_id"] = rows[0]["id"]
 
+        print(f"User login: {rows[0]["username"]}")
         # Redirect user to home page
         return redirect("/")
 
@@ -200,6 +202,7 @@ def register():
             return apology("password and confirm password must be same", 400)
 
         rows = db.execute("SELECT * FROM users WHERE username = ?", request.form.get("username"))
+        print(db.execute("SELECT * FROM users "))
 
         if len(rows) == 1:
             return apology("username already exist", 400)
@@ -209,7 +212,6 @@ def register():
             # Query database for username
             db.execute("INSERT INTO users (username, hash) VALUES (?,?)",
                        request.form.get("username"), hash_password)
-
         # Redirect user to home page
         return redirect("/")
 
