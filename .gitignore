@@ -1,4 +1,4 @@
 flask_session/
 finance-env/
-finance.db
+*finance.db
 __pycache__/
