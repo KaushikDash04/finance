@@ -54,39 +54,36 @@ def lookup(symbol):
     """Look up quote for symbol."""
 
     # Prepare API request
-    # end = datetime.datetime.now(pytz.timezone("US/Eastern"))
-    # start = end - datetime.timedelta(days=7)
+    symbol = symbol.upper()
+    end = datetime.datetime.now(pytz.timezone("US/Eastern"))
+    start = end - datetime.timedelta(days=7)
 
-    # # Yahoo Finance API
-    # url = (
-    #     f"https://query1.finance.yahoo.com/v7/finance/download/{urllib.parse.quote_plus(symbol)}"
-    #     f"?period1={int(start.timestamp())}"
-    #     f"&period2={int(end.timestamp())}"
-    #     f"&interval=1d&events=history&includeAdjustedClose=true"
-    # )
-
-    # IEX Cloud API
-    API_KEY = "pk_8a1e00f58d2944afab09e21eba2c54c4"
+    # Yahoo Finance API
     url = (
-        f"https://api.iex.cloud/v1/data/core/quote/"
-        f"{urllib.parse.quote_plus(symbol)}"
-        f"?token={API_KEY}"
+        f"https://query1.finance.yahoo.com/v7/finance/download/{urllib.parse.quote_plus(symbol)}"
+        f"?period1={int(start.timestamp())}"
+        f"&period2={int(end.timestamp())}"
+        f"&interval=1d&events=history&includeAdjustedClose=true"
     )
+    API_KEY = 'C4939IEIL2P5H3ON'
+    url2 = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={API_KEY}"
 
     # Query API
     try:
         response = requests.get(
             url,
-            cookies={"session": str(uuid.uuid4())}
-            # headers={"Accept": "*/*", "User-Agent": request.headers.get("User-Agent")},
+            cookies={"session": str(uuid.uuid4())},
+            headers={"Accept": "*/*", "User-Agent": request.headers.get("User-Agent")},
         )
         response.raise_for_status()
-        # Parse response
-        quotes = response.json()
+
         # CSV header: Date,Open,High,Low,Close,Adj Close,Volume
-        latestPrice = round(float(quotes[0]["latestPrice"]), 2)
-        companyName = quotes[0]["companyName"]
-        return {"price": latestPrice, "symbol": quotes[0]["symbol"], "name" : companyName}
+        quotes = list(csv.DictReader(response.content.decode("utf-8").splitlines()))
+        price = round(float(quotes[-1]["Adj Close"]), 2)
+        r = requests.get(url2)
+        data = r.json()
+
+        return {"price": price, "symbol": symbol, "name": data["Name"]}
     except (KeyError, IndexError, requests.RequestException, ValueError):
         return None
 
