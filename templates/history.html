@@ -21,7 +21,7 @@
             <!-- Loop through the database entries to display them in this table -->
             {% for trade in trades %}
                 <tr>
-                    <td class="text-start">{{ trade["TRANSACTION_ID"] }}</td>
+                    <td class="text-start">{{ trade["transaction_id"] }}</td>
                     <td class="text-start">{{ trade["symbol"] }}</td>
                     <td class="text-start">{{ trade["name"]}}</td>
                     <td class="text-end">{{ trade["shares"]}}</td>

@@ -21,37 +21,36 @@
             <!-- Loop through the database entries to display them in this table -->
             {% for share in user_portfolio %}
                 <tr>
-                    <td class="text-start">{{ share["symbol"] }}</td>
-                    <td class="text-start">{{ share["name"]}}</td>
+                    <td class="text-start">{{ share.symbol }}</td>
+                    <td class="text-start">{{ share.name }}</td>
                     <td class="text-start">
                         <form action="/buy" method="post">
-                                <input type="number" min="1" name="shares" placeholder="shares" value = "1" hidden style="width:1px">
-                                <input type="text" min="1" hidden name="symbol" placeholder="symbol" readonly value = "{{ share["symbol"] }}" style="width:80px">
-                                <button class="btn btn-primary" type="submit" >BUY</button>
+                            <input type="number" min="1" name="shares" placeholder="shares" value="1" hidden style="width:1px">
+                            <input type="text" min="1" hidden name="symbol" placeholder="symbol" readonly value="{{ share.symbol }}" style="width:80px">
+                            <button class="btn btn-primary" type="submit">BUY</button>
                         </form>
                     </td>
-                        <td class="text-start">
+                    <td class="text-start">
                         <form action="/sell" method="post">
-                                <button class="btn btn-primary" type="submit" >SELL</button>
-                                <input type="number" min="1" name="shares" placeholder="shares" value = "1" hidden style="width:1px">
-                                <input type="text" min="1" hidden name="symbol" placeholder="symbol" readonly value = "{{ share["symbol"] }}" style="width:80px">
-                                </form>
+                            <button class="btn btn-primary" type="submit">SELL</button>
+                            <input type="number" min="1" name="shares" placeholder="shares" value="1" hidden style="width:1px">
+                            <input type="text" min="1" hidden name="symbol" placeholder="symbol" readonly value="{{ share.symbol }}" style="width:80px">
+                        </form>
                     </td>
-                    <td class="text-end">{{ share["SUM(shares)"]}}</td>
-                    <td class="text-end">{{ share["currentprice"] | usd}}</td>
-                    <td class="text-end">{{ share["totalprice"] | usd}}</td>
+                    <td class="text-end">{{ share.total_shares }}</td>
+                    <td class="text-end">{{ share.currentprice | usd }}</td>
+                    <td class="text-end">{{ share.totalprice | usd }}</td>
                 </tr>
             {% endfor %}
         <tfoot>
             <tr>
                 <td class="border-0 fw-bold text-end" colspan="6">Cash</td>
-                <td class="border-0 text-end">{{user_cash[0]["cash"] | usd}}</td>
+                <td class="border-0 text-end">{{ user_cash | usd }}</td>
             </tr>
             <tr>
                 <td class="border-0 fw-bold text-end" colspan="6">TOTAL</td>
-                <td class="border-0 w-bold text-end">{{(user_cash[0]["cash"] + current_worth) | usd}}</td>
+                <td class="border-0 fw-bold text-end">{{ (user_cash + current_worth) | usd }}</td>
             </tr>
         </tfoot>
     </table>
 {% endblock %}
-
