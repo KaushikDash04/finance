@@ -51,11 +51,13 @@ def login_required(f):
 
 def lookup(symbol):
     """Look up quote for symbol using Twelve Data API (in INR)."""
+    import urllib.parse
+    import uuid
+    import requests
 
-    API_KEY = '69a1b2d94ccc448483e043654f271e9d'  # Replace with your real API key
+    API_KEY = '69a1b2d94ccc448483e043654f271e9d'
     symbol = symbol.upper()
 
-    # Format as 'INFY:NSE' if no exchange is included
     if ":" not in symbol:
         symbol += ":NSE"
 
@@ -69,15 +71,23 @@ def lookup(symbol):
         )
         data = response.json()
 
-        # Check for expected fields
         if "close" not in data or "name" not in data:
-            print(f"[TwelveData] Error in response: {data}")
+            print(f"[TwelveData] Error: {data}")
             return None
 
         price = round(float(data["close"]), 2)
         name = data["name"]
 
-        return {"price": price, "symbol": symbol, "name": name}
+        # Get TradingView-compatible symbol
+        exchange, raw_symbol = symbol.split(":")
+        tv_symbol = f"{exchange}:{raw_symbol}"  # TradingView wants 'NSE:INFY'
+
+        return {
+            "price": price,
+            "symbol": symbol,
+            "name": name,
+            "tv_symbol": tv_symbol  # ⬅️ TradingView-ready symbol
+        }
 
     except Exception as e:
         print(f"[lookup error] {e}")
