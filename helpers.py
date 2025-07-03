@@ -50,14 +50,14 @@ def login_required(f):
     return decorated_function
 
 def lookup(symbol):
-    """Look up quote for symbol using Twelve Data API in INR."""
+    """Look up quote for symbol using Twelve Data API (in INR)."""
 
+    API_KEY = '69a1b2d94ccc448483e043654f271e9d'  # Replace with your real API key
     symbol = symbol.upper()
-    API_KEY = '69a1b2d94ccc448483e043654f271e9d'  # Replace this with your actual key
 
-    # For NSE or BSE Indian stocks, use full name
-    if not symbol.endswith(".NSE") and not symbol.endswith(".BSE"):
-        symbol += ".NSE"  # default to NSE if Indian
+    # Format as 'INFY:NSE' if no exchange is included
+    if ":" not in symbol:
+        symbol += ":NSE"
 
     url = f"https://api.twelvedata.com/quote?symbol={urllib.parse.quote_plus(symbol)}&apikey={API_KEY}"
 
@@ -67,18 +67,22 @@ def lookup(symbol):
             cookies={"session": str(uuid.uuid4())},
             headers={"Accept": "*/*", "User-Agent": "Mozilla/5.0"},
         )
-        response.raise_for_status()
         data = response.json()
 
+        # Check for expected fields
         if "close" not in data or "name" not in data:
+            print(f"[TwelveData] Error in response: {data}")
             return None
 
         price = round(float(data["close"]), 2)
         name = data["name"]
 
         return {"price": price, "symbol": symbol, "name": name}
-    except (KeyError, IndexError, requests.RequestException, ValueError):
+
+    except Exception as e:
+        print(f"[lookup error] {e}")
         return None
+
 
 
 
