@@ -49,41 +49,31 @@ def login_required(f):
 
     return decorated_function
 
-
 def lookup(symbol):
-    """Look up quote for symbol."""
+    """Look up quote for symbol using Twelve Data API."""
 
-    # Prepare API request
     symbol = symbol.upper()
-    end = datetime.datetime.now(pytz.timezone("US/Eastern"))
-    start = end - datetime.timedelta(days=7)
+    API_KEY = '69a1b2d94ccc448483e043654f271e9d'  # Replace this with your actual key
 
-    # Yahoo Finance API
-    url = (
-        f"https://query1.finance.yahoo.com/v7/finance/download/{urllib.parse.quote_plus(symbol)}"
-        f"?period1={int(start.timestamp())}"
-        f"&period2={int(end.timestamp())}"
-        f"&interval=1d&events=history&includeAdjustedClose=true"
-    )
-    API_KEY = 'C4939IEIL2P5H3ON'
-    url2 = f"https://www.alphavantage.co/query?function=OVERVIEW&symbol={symbol}&apikey={API_KEY}"
+    # Construct URL
+    url = f"https://api.twelvedata.com/quote?symbol={urllib.parse.quote_plus(symbol)}&apikey={API_KEY}"
 
-    # Query API
     try:
         response = requests.get(
             url,
             cookies={"session": str(uuid.uuid4())},
-            headers={"Accept": "*/*", "User-Agent": request.headers.get("User-Agent")},
+            headers={"Accept": "*/*", "User-Agent": "Mozilla/5.0"},  # simulate browser UA
         )
         response.raise_for_status()
+        data = response.json()
 
-        # CSV header: Date,Open,High,Low,Close,Adj Close,Volume
-        quotes = list(csv.DictReader(response.content.decode("utf-8").splitlines()))
-        price = round(float(quotes[-1]["Adj Close"]), 2)
-        r = requests.get(url2)
-        data = r.json()
+        if "close" not in data or "name" not in data:
+            return None
 
-        return {"price": price, "symbol": symbol, "name": data["Name"]}
+        price = round(float(data["close"]), 2)
+        name = data["name"]
+
+        return {"price": price, "symbol": symbol, "name": name}
     except (KeyError, IndexError, requests.RequestException, ValueError):
         return None
 
