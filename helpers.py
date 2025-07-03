@@ -50,19 +50,22 @@ def login_required(f):
     return decorated_function
 
 def lookup(symbol):
-    """Look up quote for symbol using Twelve Data API."""
+    """Look up quote for symbol using Twelve Data API in INR."""
 
     symbol = symbol.upper()
     API_KEY = '69a1b2d94ccc448483e043654f271e9d'  # Replace this with your actual key
 
-    # Construct URL
+    # For NSE or BSE Indian stocks, use full name
+    if not symbol.endswith(".NSE") and not symbol.endswith(".BSE"):
+        symbol += ".NSE"  # default to NSE if Indian
+
     url = f"https://api.twelvedata.com/quote?symbol={urllib.parse.quote_plus(symbol)}&apikey={API_KEY}"
 
     try:
         response = requests.get(
             url,
             cookies={"session": str(uuid.uuid4())},
-            headers={"Accept": "*/*", "User-Agent": "Mozilla/5.0"},  # simulate browser UA
+            headers={"Accept": "*/*", "User-Agent": "Mozilla/5.0"},
         )
         response.raise_for_status()
         data = response.json()
@@ -78,9 +81,10 @@ def lookup(symbol):
         return None
 
 
-def usd(value):
-    """Format value as USD."""
-    return f"${value:,.2f}"
+
+def inr(value):
+    """Format value as INR."""
+    return f"₹{value:,.2f}"
 
 def is_int(s):
     """ check if the input is an integer """

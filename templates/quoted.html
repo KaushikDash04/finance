@@ -28,7 +28,7 @@
 
 {% block main %}
     <p>
-        A share of {{ stock_quote.name }} ({{ stock_quote.symbol }}) costs {{ stock_quote.price | usd }}.
+        A share of {{ stock_quote.name }} ({{ stock_quote.symbol }}) costs {{ stock_quote.price | inr }}.
     </p>
     <div class="tradingview-chart">
         <div class="tradingview-widget-container">
